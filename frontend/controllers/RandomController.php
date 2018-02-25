@@ -26,8 +26,8 @@ class RandomController extends \yii\web\Controller
 		$model->time = time();
 
 		if ($model->getRandom()) {
-			if (!$model->save()) {
-				echo 'ERROR!'; exit;
+			if ( ! $model->save()) {
+				throw new ServerErrorHttpException('Server Error');
 			}
 		}
 

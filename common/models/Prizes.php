@@ -29,8 +29,6 @@ class Prizes extends \yii\db\ActiveRecord
 
 	public function getRandom()
 	{
-		$this->setIsNewRecord(true);
-		
 		$thing_list = Things::find()->andWhere(['>', 'count', 0])->all();
 		$thing_count = count($thing_list);
 
@@ -124,7 +122,7 @@ class Prizes extends \yii\db\ActiveRecord
 		}
 		switch ($this->type) {
 			case 'money':
-				$this->convertToPoints($this->count);
+				$this->convertToPoints();
 				$model = User::findOne($this->user_id);
 				$model->points += $this->receivedPoints;
 				$model->save();
@@ -187,15 +185,11 @@ class Prizes extends \yii\db\ActiveRecord
 			$this->receivedPoints = false;
 			return;
 		}
-		if ( ! is_numeric(Yii::$app->params['ratioMoneyToPoints'])) {
-			$this->receivedPoints = false;
-			return;
-		} 
-		if (Yii::$app->params['ratioMoneyToPoints'] == 0) {
+		if ( ! is_numeric(Yii::$app->params['ratioMoneyToPoints']) || Yii::$app->params['ratioMoneyToPoints'] == 0) {
 			$this->receivedPoints = false;
 			return;
 		}
-		$this->receivedPoints = ceil($money * Yii::$app->params['ratioMoneyToPoints']);
+		$this->receivedPoints = ceil($this->count * Yii::$app->params['ratioMoneyToPoints']);
 	}
 
 	public function afterSave($insert, $changedAttributes)
