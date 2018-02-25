@@ -25,7 +25,7 @@ use common\models\QueueSearch;
 class Prizes extends \yii\db\ActiveRecord
 {
 
-	public $convertPoints;
+	public $receivedPoints = false;
 
 	public function getRandom()
 	{
@@ -99,8 +99,7 @@ class Prizes extends \yii\db\ActiveRecord
 				$model->save();
 				break;
 			case 'money':
-				// bankcard-api
-				sleep(3);
+				$this->sendMoney();
 				break;
 			case 'thing':
 				$model = new Queue();
@@ -125,9 +124,9 @@ class Prizes extends \yii\db\ActiveRecord
 		}
 		switch ($this->type) {
 			case 'money':
-				$points = $this->convertMoney($this->count);
+				$this->convertToPoints($this->count);
 				$model = User::findOne($this->user_id);
-				$model->points += $points;
+				$model->points += $this->receivedPoints;
 				$model->save();
 				break;
 			default:
@@ -138,12 +137,6 @@ class Prizes extends \yii\db\ActiveRecord
 		$this->status = 2;
 		$this->save();
 		return true;
-	}
-	
-	protected function convertMoney($money)
-	{
-		$this->convertPoints = ceil($money * Yii::$app->params['ratioMoneyToPoints']);
-		return $this->convertPoints;
 	}
 
 	public function refusePrize()
@@ -172,6 +165,37 @@ class Prizes extends \yii\db\ActiveRecord
 		$this->status = 3;
 		$this->save();
 		return true;
+	}
+	
+	public function sendMoney()
+	{
+		// request to bank api
+		sleep(3);
+		if (true) {
+			$this->status = 1;
+			$this->save();
+		}
+	}
+
+	public function convertToPoints()
+	{
+		if ($this->count == 0) {
+			$this->receivedPoints = false;
+			return;
+		}
+		if ($this->type != 'money') {
+			$this->receivedPoints = false;
+			return;
+		}
+		if ( ! is_numeric(Yii::$app->params['ratioMoneyToPoints'])) {
+			$this->receivedPoints = false;
+			return;
+		} 
+		if (Yii::$app->params['ratioMoneyToPoints'] == 0) {
+			$this->receivedPoints = false;
+			return;
+		}
+		$this->receivedPoints = ceil($money * Yii::$app->params['ratioMoneyToPoints']);
 	}
 
 	public function afterSave($insert, $changedAttributes)
