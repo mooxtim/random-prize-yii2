@@ -107,8 +107,6 @@ class Prizes extends \yii\db\ActiveRecord
 				break;
 			default:
 				return false;
-				break;
-			
 		}
 		$this->status = 1;
 		$this->save();
@@ -120,20 +118,22 @@ class Prizes extends \yii\db\ActiveRecord
 		if ($this->status !== 0) {
 			return false;
 		}
+		if ( ! $this->user_id) {
+			return false;
+		}
 		switch ($this->type) {
 			case 'money':
-				$this->convertToPoints();
-				$model = User::findOne($this->user_id);
-				$model->points += $this->receivedPoints;
-				$model->save();
+				$this->convertMoneyToPoints();
 				break;
 			default:
 				return false;
-				break;
 			
 		}
 		$this->status = 2;
 		$this->save();
+		$model = User::findOne($this->user_id);
+		$model->points += $this->receivedPoints;
+		$model->save();
 		return true;
 	}
 
@@ -157,7 +157,6 @@ class Prizes extends \yii\db\ActiveRecord
 				break;
 			default:
 				return false;
-				break;
 			
 		}
 		$this->status = 3;
@@ -175,7 +174,7 @@ class Prizes extends \yii\db\ActiveRecord
 		}
 	}
 
-	public function convertToPoints()
+	public function convertMoneyToPoints()
 	{
 		if ($this->count == 0) {
 			$this->receivedPoints = false;
@@ -190,6 +189,7 @@ class Prizes extends \yii\db\ActiveRecord
 			return;
 		}
 		$this->receivedPoints = ceil($this->count * Yii::$app->params['ratioMoneyToPoints']);
+
 	}
 
 	public function afterSave($insert, $changedAttributes)
