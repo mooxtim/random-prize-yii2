@@ -29,8 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'queue_id',
-            'user_id',
-            'thing_id',
+            'prize_id',
             'status',
         ],
     ]) ?>

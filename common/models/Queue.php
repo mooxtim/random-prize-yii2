@@ -8,8 +8,7 @@ use Yii;
  * This is the model class for table "queue".
  *
  * @property int $queue_id
- * @property int $user_id
- * @property int $thing_id
+ * @property int $prize_id
  * @property int $status
  */
 class Queue extends \yii\db\ActiveRecord
@@ -28,8 +27,8 @@ class Queue extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'thing_id'], 'required'],
-            [['user_id', 'thing_id', 'status'], 'integer'],
+            [['prize_id'], 'required'],
+            [['prize_id', 'status'], 'integer'],
         ];
     }
 
@@ -40,8 +39,7 @@ class Queue extends \yii\db\ActiveRecord
     {
         return [
             'queue_id' => Yii::t('app', 'Queue ID'),
-            'user_id' => Yii::t('app', 'User ID'),
-            'thing_id' => Yii::t('app', 'Thing ID'),
+            'prize_id' => Yii::t('app', 'Prize ID'),
             'status' => Yii::t('app', 'Status'),
         ];
     }

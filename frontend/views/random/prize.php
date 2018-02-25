@@ -5,7 +5,7 @@ use \yii\bootstrap\Html;
 
 ?>
 
-<h1>You are Win:</h1>
+<h1>You Won:</h1>
 <?php if ($prize->type == 'points') { ?>
 <h3><?= $prize->count ?> points!</h3>
 <p><?= Html::a('Refuse', ['random/refuse', 'id' => $prize->prize_id], ['class' => 'btn btn-danger']) ?></p>
@@ -18,7 +18,7 @@ use \yii\bootstrap\Html;
 <p><?= Html::a('Convert to Points', ['random/convert', 'id' => $prize->prize_id], ['class' => 'btn btn-success']) ?></p>
 
 <?php } else { ?>
-<h3><?= $prize->name ?>!</h3>
+<h3>The <?= $prize->name ?>!</h3>
 <p><?= Html::a('Refuse', ['random/refuse', 'id' => $prize->prize_id], ['class' => 'btn btn-danger']) ?></p>
 <p><?= Html::a('Take ' . $prize->name, ['random/take', 'id' => $prize->prize_id], ['class' => 'btn btn-primary']) ?></p>
 <?php } ?>

@@ -12,6 +12,9 @@ class RandomController extends \yii\web\Controller
 {
 	public function actionIndex()
 	{
+		if (Yii::$app->user->isGuest) {
+			return Yii::$app->response->redirect(['site/login']);
+		}
 		return $this->render('index');
 	}
 	

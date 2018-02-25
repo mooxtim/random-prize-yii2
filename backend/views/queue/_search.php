@@ -17,9 +17,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'queue_id') ?>
 
-    <?= $form->field($model, 'user_id') ?>
-
-    <?= $form->field($model, 'thing_id') ?>
+    <?= $form->field($model, 'prize_id') ?>
 
     <?= $form->field($model, 'status') ?>
 

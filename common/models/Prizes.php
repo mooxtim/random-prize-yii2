@@ -101,8 +101,7 @@ class Prizes extends \yii\db\ActiveRecord
 				break;
 			case 'thing':
 				$model = new Queue();
-				$model->user_id = $this->user_id; 
-				$model->thing_id = $this->thing_id;
+				$model->prize_id = $this->prize_id; 
 				$model->save();
 				break;
 			default:
