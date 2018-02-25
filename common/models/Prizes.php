@@ -7,6 +7,8 @@ use common\models\Money;
 use common\models\MoneySearch;
 use common\models\Things;
 use common\models\ThingsSearch;
+use common\models\Queue;
+use common\models\QueueSearch;
 
 /**
 * This is the model class for table "prizes".
@@ -22,6 +24,8 @@ use common\models\ThingsSearch;
 */
 class Prizes extends \yii\db\ActiveRecord
 {
+
+	public $convertPoints;
 
 	public function getRandom()
 	{
@@ -82,25 +86,110 @@ class Prizes extends \yii\db\ActiveRecord
 		return true;
 		
 	}
+	
+	public function takePrize()
+	{
+		if ($this->status !== 0) {
+			return false;
+		}
+		switch ($this->type) {
+			case 'points':
+				$model = User::findOne($this->user_id);
+				$model->points += $this->count;
+				$model->save();
+				break;
+			case 'money':
+				// bankcard-api
+				sleep(3);
+				break;
+			case 'thing':
+				$model = new Queue();
+				$model->user_id = $this->user_id; 
+				$model->thing_id = $this->thing_id;
+				$model->save();
+				break;
+			default:
+				return false;
+				break;
+			
+		}
+		$this->status = 1;
+		$this->save();
+		return true;
+	}
+	
+	public function convertPrize()
+	{
+		if ($this->status !== 0) {
+			return false;
+		}
+		switch ($this->type) {
+			case 'money':
+				$points = $this->convertMoney($this->count);
+				$model = User::findOne($this->user_id);
+				$model->points += $points;
+				$model->save();
+				break;
+			default:
+				return false;
+				break;
+			
+		}
+		$this->status = 2;
+		$this->save();
+		return true;
+	}
+	
+	protected function convertMoney($money)
+	{
+		$this->convertPoints = ceil($money * Yii::$app->params['ratioMoneyToPoints']);
+		return $this->convertPoints;
+	}
+
+	public function refusePrize()
+	{
+		if ($this->status !== 0) {
+			return false;
+		}
+		switch ($this->type) {
+			case 'points':
+				break;
+			case 'money':
+				$model = Money::findOne(1);
+				$model->value += $this->count;
+				$model->save();
+				break;
+			case 'thing':
+				$model = Things::findOne($this->thing_id);
+				$model->count++;
+				$model->save();
+				break;
+			default:
+				return false;
+				break;
+			
+		}
+		$this->status = 3;
+		$this->save();
+		return true;
+	}
 
 	public function afterSave($insert, $changedAttributes)
 	{
 		parent::afterSave($insert, $changedAttributes);
 	
-		if ($insert) { 
+		if ($insert) {
 			if ($this->type == 'money') {
 				$model = Money::findOne(1);
 				$model->value -= $this->count;
 				$model->save();
 			}
-			
 			if ($this->type == 'thing') {
 				$model = Things::findOne($this->thing_id);
 				$model->count--;
 				$model->save();
 			}
-		}
-		
+		} 
 	}
 
 	/**
@@ -118,10 +207,9 @@ class Prizes extends \yii\db\ActiveRecord
 	{
 		return [
 			[['time', 'type', 'count', 'user_id'], 'required'],
-			[['time', 'count', 'user_id', 'thing_id'], 'integer'],
+			[['time', 'count', 'user_id', 'thing_id', 'status'], 'integer'],
 			[['type'], 'string', 'max' => 50],
 			[['name'], 'string', 'max' => 255],
-			[['status'], 'string', 'max' => 1],
 		];
 	}
 
