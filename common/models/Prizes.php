@@ -4,11 +4,9 @@ namespace common\models;
 
 use Yii;
 use common\models\Money;
-use common\models\MoneySearch;
 use common\models\Things;
-use common\models\ThingsSearch;
 use common\models\Queue;
-use common\models\QueueSearch;
+use common\models\Payments;
 
 /**
 * This is the model class for table "prizes".
@@ -101,7 +99,8 @@ class Prizes extends \yii\db\ActiveRecord
 				break;
 			case 'thing':
 				$model = new Queue();
-				$model->prize_id = $this->prize_id; 
+				$model->prize_id = $this->prize_id;
+				$model->time = time();
 				$model->save();
 				break;
 			default:
@@ -162,12 +161,16 @@ class Prizes extends \yii\db\ActiveRecord
 		$this->save();
 		return true;
 	}
-	
+
 	public function sendMoney()
 	{
-		// request to bank api
-		sleep(3);
-		if (true) {
+		$model = new Payments();
+		$model->count = $this->count;
+		$model->prize_id = $this->prize_id;
+		$model->time = time();
+		$model->save();
+		
+		if ($model->sendToBank()) {
 			$this->status = 1;
 			$this->save();
 		}

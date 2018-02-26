@@ -8,10 +8,10 @@ use \yii\bootstrap\Html;
 <h3>The money has been sent to your bankcard</h3>
 
 <?php } else if ($prize->type == 'points') { ?>
-<h3>Points credited to your account!</h3>
+<h3>Points have been credited to your account</h3>
 
 <?php } else { ?>
-<h3>Your prize will be send</h3>
+<h3>Your prize will be sent</h3>
 <?php } ?>
 
 <p><?= Html::a('Back', ['random/index'], ['class' => 'btn btn-primary']) ?></p>

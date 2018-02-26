@@ -4,19 +4,19 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel common\models\QueueSearch */
+/* @var $searchModel common\models\PaymentsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Queues');
+$this->title = Yii::t('app', 'Payments');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="queue-index">
+<div class="payments-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Create Queue'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('app', 'Create Payments'), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -25,9 +25,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'queue_id',
-            'prize_id',
+            'payment_id',
+            'count',
             'status',
+            'prize_id',
             'time:datetime',
 
             ['class' => 'yii\grid\ActionColumn'],
